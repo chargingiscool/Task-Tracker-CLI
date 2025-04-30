@@ -1,5 +1,6 @@
 import json
 import datetime
+import sys
 
 def add_task():
     name = input("Task name: ")
@@ -17,6 +18,7 @@ def add_task():
         "desc": f"{desc}",
         "status": f"{status}",
         "createdAt": f"{str(datetime.datetime.now())[:-10]}",
+        "updatedAt": f"{str(datetime.datetime.now())[:-10]}"
     }
 
     return new_task
@@ -27,7 +29,7 @@ def list_tasks():
     else:
         print("These are the tasks you input: ")
         for dicts in data:
-            print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}")
+            print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}, Updated At: {dicts['updatedAt']}")
 
 def remove_tasks(data):
     task_to_remove = input("Which task would you like to remove? ")
@@ -47,9 +49,8 @@ def list_finished_tasks():
         print("These are the finished tasks you have: ")
         for dicts in data:
             if dicts.get("status") == "done":
-                print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}")
-        else:
-            print("You have no tasks that are finished")    
+                 print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}, Updated At: {dicts['updatedAt']}")
+        print("\nThese are all the tasks you have finished. If nothing is printed, you have no tasks that are finished")  
 def list_todo_tasks():
     if len(data) == 0:
         print("You have no tasks")
@@ -57,9 +58,8 @@ def list_todo_tasks():
         print("These are the tasks you have to-do: ")
         for dicts in data:
             if dicts.get("status") == "todo":
-                print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}")
-        else:
-            print("You have no tasks to-do")             
+                 print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}, Updated At: {dicts['updatedAt']}")
+        print("\nThese are all the tasks you have to do. If nothing is printed, you have no tasks to do")           
 
 def list_inprogress_tasks():
     if len(data) == 0:
@@ -68,9 +68,8 @@ def list_inprogress_tasks():
         print("These are the tasks you have inprogress: ")
         for dicts in data:
             if dicts.get("status") == "inprogress":
-                print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}")     
-        else:
-            print("You have no tasks in progress")     
+                 print(f"Name: {dicts['name']}, Description: {dicts['desc']}, Status: {dicts['status']}, Created At: {dicts['createdAt']}, Updated At: {dicts['updatedAt']}")   
+        print("\nThese are all the tasks you have in progress. If nothing is printed, you have no tasks that are in progress")      
 
 def update_task_status(data):
     update_main = input("Would you like to update a task, description, or status: ")
@@ -84,6 +83,7 @@ def update_task_status(data):
         for dicts in data:
             if dicts["name"] == task_to_update:
                 dicts["name"] = name_to_give
+                dicts["updatedAt"] = f"{str(datetime.datetime.now())[:-10]}"
                 return data
             else:
                 print("That task was not found")
@@ -97,6 +97,7 @@ def update_task_status(data):
         for dicts in data:
             if dicts["name"] == task_to_update:
                 dicts["desc"] = description_to_give
+                dicts["updatedAt"] = f"{str(datetime.datetime.now())[:-10]}"
                 return data
             else:
                 print("That task was not found")
@@ -110,6 +111,7 @@ def update_task_status(data):
         for dicts in data:
             if dicts["name"] == task_to_update:
                 dicts["status"] = status_to_give
+                dicts["updatedAt"] = f"{str(datetime.datetime.now())[:-10]}"
                 return data
             else:
                 print("That task was not found")
@@ -121,7 +123,7 @@ with open('data.json','r') as file:
     data = json.load(file)
 
 while True:
-    main = input("Welcome to Task Tracker CLI! How may I assist you with your tasks? (add, list, remove, update) ")
+    main = input("Welcome to Task Tracker CLI! How may I assist you with your tasks? (add, list, remove, update, exit) ")
     if main == "list":
         list_type = input("What shall I list out (general, todo, done, inprogress) ")
         if list_type == "general":
@@ -140,7 +142,11 @@ while True:
     if main == "update":
         list_tasks()
         update_task_status(data)
+    if main == "exit":
+        sys.exit()
+    elif main not in ["list","exit","update","remove","add"]:
+        print("That was invalid.")
 
 
-    with open('data.json','w') as file:
+    with open('data.jsn','w') as file:
         json.dump(data,file,indent=2)
